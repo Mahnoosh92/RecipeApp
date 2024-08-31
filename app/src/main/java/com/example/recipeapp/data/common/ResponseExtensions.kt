@@ -6,5 +6,6 @@ import retrofit2.Response
 
 fun <T> Response<T>.getError(): ErrorDTO {
     val responseBody = errorBody()?.string()
-    return Gson().fromJson(responseBody, ErrorDTO::class.java)
+//    return Gson().fromJson(responseBody, ErrorDTO::class.java)
+    return ErrorDTO(code = 400, message = "Something went wrong")
 }

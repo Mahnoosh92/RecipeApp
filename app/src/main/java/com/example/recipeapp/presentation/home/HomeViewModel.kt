@@ -6,11 +6,13 @@ import com.example.recipeapp.data.di.MainDispatcher
 import com.example.recipeapp.domain.model.Recipe
 import com.example.recipeapp.domain.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -25,9 +27,13 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
-
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        _uiState.update {
+            it.copy(error = exception.message)
+        }
+    }
     fun getRecipes() {
-        viewModelScope.launch(mainDispatcher) {
+        viewModelScope.launch(mainDispatcher+handler) {
             recipeRepository
                 .getRecipes(randomChar = "a")
                 .onStart {
@@ -41,14 +47,14 @@ class HomeViewModel @Inject constructor(
                         it.copy(recipes = data, isLoading = false)
                     }
                 }
-                .onStart {
+                .onCompletion {
                     _uiState.update {
                         it.copy(isLoading = false)
                     }
                 }
-                .catch {
+                .catch {ex->
                     _uiState.update {
-                        it.copy(error = it.error)
+                        it.copy(error = ex.message, isLoading = false)
                     }
                 }
                 .collect()
@@ -56,14 +62,19 @@ class HomeViewModel @Inject constructor(
     }
 
     fun insertRecipe(recipe: Recipe) {
-        viewModelScope.launch(mainDispatcher) {
+        viewModelScope.launch(mainDispatcher+handler) {
             recipeRepository.insertRecipe(recipe = recipe)
         }
     }
 
     fun clearRecipe(id: String) {
-        viewModelScope.launch(mainDispatcher) {
+        viewModelScope.launch(mainDispatcher+handler) {
             recipeRepository.clearRecipe(id = id)
+        }
+    }
+    fun consumeError() {
+        _uiState.update {
+            it.copy(error = null)
         }
     }
 }
