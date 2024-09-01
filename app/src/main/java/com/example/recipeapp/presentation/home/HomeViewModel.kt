@@ -25,8 +25,13 @@ class HomeViewModel @Inject constructor(
     @MainDispatcher private val mainDispatcher: kotlinx.coroutines.CoroutineDispatcher
 ) : ViewModel() {
 
+    init {
+        val test = 1
+    }
+
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
+
     private val handler = CoroutineExceptionHandler { _, exception ->
         _uiState.update {
             it.copy(error = exception.message)

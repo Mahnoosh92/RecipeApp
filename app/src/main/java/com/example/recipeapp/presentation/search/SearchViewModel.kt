@@ -29,17 +29,14 @@ class SearchViewModel @Inject constructor(
 ) :
     ViewModel() {
     val emailText = mutableStateOf("")
-    val searchRecipeText = mutableStateOf("")
+    val searchRecipeText = MutableStateFlow("")
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            snapshotFlow {
-                searchRecipeText.value
-            }
-                .stateIn(viewModelScope)
+            searchRecipeText
                 .filterNotNull()
                 .filter {
                     it.isNotBlank()

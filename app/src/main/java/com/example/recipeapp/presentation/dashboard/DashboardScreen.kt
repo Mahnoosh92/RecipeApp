@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 
-fun DashboardScreen(modifier: Modifier = Modifier, onRecipeItemClicked: (Recipe) -> Unit) {
+fun DashboardScreen(modifier: Modifier = Modifier,homeViewModel: HomeViewModel, onRecipeItemClicked: (Recipe) -> Unit) {
 
     val topLevelDestinations = listOf(RecipeScreens.Home, RecipeScreens.SEARCH)
     var currentRoute by rememberSaveable {
@@ -59,7 +59,6 @@ fun DashboardScreen(modifier: Modifier = Modifier, onRecipeItemClicked: (Recipe)
         Surface(modifier = modifier.padding(paddings)) {
             when (currentRoute) {
                 RecipeScreens.Home.route -> {
-                    val homeViewModel: HomeViewModel = hiltViewModel()
                     HomeScreen(
                         onRecipeItemClicked = onRecipeItemClicked,
                         viewModel = homeViewModel,

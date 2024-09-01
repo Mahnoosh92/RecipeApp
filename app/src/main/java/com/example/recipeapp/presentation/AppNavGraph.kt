@@ -42,6 +42,7 @@ import com.example.recipeapp.presentation.components.RecipeTopbar
 import com.example.recipeapp.presentation.dashboard.DashboardScreen
 import com.example.recipeapp.presentation.detail.DetailScreen
 import com.example.recipeapp.presentation.home.HomeScreen
+import com.example.recipeapp.presentation.home.HomeViewModel
 import com.example.recipeapp.presentation.navigation.DASHBOARD_ROUTE
 import com.example.recipeapp.presentation.navigation.DETAIL_ROUTE
 import com.example.recipeapp.presentation.navigation.HOME_ROUTE
@@ -68,16 +69,20 @@ fun AppNavGraph(
         modifier = modifier
     ) {
         composable(DASHBOARD_ROUTE) {
-            DashboardScreen( onRecipeItemClicked = {
-                navController.navigate(
-                    "detail/${it.recipeId}/${
-                        it.recipeImage?.replace(
-                            "https://www.themealdb.com/images/media/meals/",
-                            ""
-                        )
-                    }"
-                )
-            })
+            val homeViewModel: HomeViewModel = hiltViewModel()
+            DashboardScreen(
+                onRecipeItemClicked = {
+                    navController.navigate(
+                        "detail/${it.recipeId}/${
+                            it.recipeImage?.replace(
+                                "https://www.themealdb.com/images/media/meals/",
+                                ""
+                            )
+                        }"
+                    )
+                },
+                homeViewModel = homeViewModel
+            )
         }
         composable(DETAIL_ROUTE,
             arguments = listOf(
