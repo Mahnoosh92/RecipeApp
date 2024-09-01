@@ -42,7 +42,6 @@ class HomeViewModel @Inject constructor(
                     }
                 }
                 .onEach { data ->
-                    delay(500)
                     _uiState.update {
                         it.copy(recipes = data, isLoading = false)
                     }

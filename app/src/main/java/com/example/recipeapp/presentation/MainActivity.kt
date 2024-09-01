@@ -21,9 +21,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            RecipeAppTheme {
-                AppNavGraph()
+            val mainViewModel: MainViewModel = hiltViewModel()
+            RecipeAppTheme(darkTheme = mainViewModel.isDark.value) {
+                AppNavGraph(){
+                    mainViewModel.updateTheme()
+                }
             }
         }
     }
